@@ -63,8 +63,8 @@ test.beforeEach(async({page})=>{
 
 test('AP-810 auto advances from the first local track to the second',async({page})=>{
   await importVia(page,[
-    {name:'First Artist - First.wav',mimeType:'audio/wav',buffer:wavBuffer({frequency:330})},
-    {name:'Second Artist - Second.wav',mimeType:'audio/wav',buffer:wavBuffer({frequency:550})},
+    {name:'First Artist - First.wav',mimeType:'audio/wav',buffer:wavBuffer({seconds:.32,frequency:330})},
+    {name:'Second Artist - Second.wav',mimeType:'audio/wav',buffer:wavBuffer({seconds:2,frequency:550})},
   ]);
   await expect(page.locator('#libraryCount')).toContainText('2 tracks');
   await page.locator('#libraryList .track').first().click();
