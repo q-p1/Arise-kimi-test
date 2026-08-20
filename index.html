@@ -7,58 +7,60 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Arise Player">
-  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="manifest" href="./manifest.webmanifest?v=811">
   <link rel="icon" href="./brand-mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./app.css?v=800">
+  <link rel="stylesheet" href="./app.css?v=811">
   <title>Arise Player</title>
 </head>
 <body>
   <div id="app">
     <header class="topbar">
-      <button id="brandHome" class="brand"><img src="./brand-mark.svg" alt=""><span><b>ARISE</b><small>PLAYER</small></span></button>
-      <button id="openSettings" class="round">⚙︎</button>
+      <button id="brandHome" class="brand" aria-label="Arise Player home"><img src="./brand-mark.svg" alt=""><span><b>ARISE</b><small>PLAYER</small></span></button>
+      <button id="openSettings" class="round" aria-label="More">⚙︎</button>
     </header>
 
     <main>
       <section class="view active" data-view="home">
         <div class="hero"><p class="eyebrow">YOUR MUSIC. YOUR DEVICE.</p><h1>Made for your ears.</h1><p id="heroCopy">Import local audio and keep it on this device.</p><div id="heroStats" class="pills"></div></div>
-        <section id="continueSection" class="section" hidden><div class="sectionHead"><div><p class="eyebrow">CONTINUE</p><h2>Pick up where you left off.</h2></div></div><button id="continueCard" class="continueCard"></button></section>
+        <section id="continueSection" class="section" hidden><div class="sectionHead"><div><p class="eyebrow">CONTINUE</p><h2>Pick up where you left off.</h2></div></div><button id="continueCard" class="continueCard" aria-label="Continue listening"></button></section>
         <section class="section"><div class="sectionHead"><div><p class="eyebrow">QUICK START</p><h2>Start listening.</h2></div></div><div class="mixGrid"><button class="mix" data-mix="all"><small>LIBRARY</small><b>Play all</b><span>Everything, in order.</span></button><button class="mix" data-mix="shuffle"><small>RANDOM</small><b>Shuffle</b><span>Let chance do something useful.</span></button><button class="mix" data-mix="favorites"><small>YOUR PICKS</small><b>Favorites</b><span>Only the ones you kept.</span></button><button class="mix" data-go="library"><small>LOCAL</small><b>Library</b><span>Browse every imported track.</span></button></div></section>
         <section id="recentSection" class="section" hidden><div class="sectionHead"><div><p class="eyebrow">RECENT</p><h2>Back in rotation.</h2></div></div><div id="recentStrip" class="recentStrip"></div></section>
       </section>
 
       <section class="view" data-view="library">
-        <div class="pageHead"><div><p class="eyebrow">LOCAL LIBRARY</p><h1>Your music.</h1><p id="libraryCount">0 tracks</p></div><div class="nativeImport addBtn" aria-label="Import audio"><span>+</span><input id="importTop" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.aiff,.ogg,.opus" multiple></div></div>
-        <div id="libraryTools" class="tools" hidden><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Search songs or artists"></label><button id="sortBtn" class="tool">Recent</button><button id="editBtn" class="tool">Edit</button></div>
+        <div class="pageHead"><div><p class="eyebrow">LOCAL LIBRARY</p><h1>Your music.</h1><p id="libraryCount">0 tracks</p></div><div class="nativeImport addBtn" aria-label="Import audio"><span>+</span><input id="importTop" type="file" aria-label="Import audio files" accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.aiff,.ogg,.opus" multiple></div></div>
+        <div id="libraryTools" class="tools" hidden><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Search songs or artists" aria-label="Search songs or artists"></label><button id="sortBtn" class="tool">Recent</button><button id="editBtn" class="tool">Edit</button></div>
         <div id="libraryList" class="trackList"></div>
-        <div id="emptyLibrary" class="empty"><div class="emptyMark">A</div><h2>Your library is empty.</h2><p>Import music straight from the iPhone Files app. The audio stays local and works offline.</p><div class="nativeImport primary"><span>Import music</span><input id="importEmpty" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.aiff,.ogg,.opus" multiple></div></div>
+        <div id="emptyLibrary" class="empty"><div class="emptyMark">A</div><h2>Your library is empty.</h2><p>Import music straight from the iPhone Files app. The audio stays local and works offline.</p><div class="nativeImport primary"><span>Import music</span><input id="importEmpty" type="file" aria-label="Import audio files" accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.aiff,.ogg,.opus" multiple></div></div>
       </section>
 
       <section class="view" data-view="playlists">
-        <div class="pageHead"><div><p class="eyebrow">COLLECTIONS</p><h1>Playlists.</h1><p>Organize without copying the audio.</p></div><button id="newPlaylist" class="addBtn">+</button></div><div id="playlistRoot"></div>
+        <div class="pageHead"><div><p class="eyebrow">COLLECTIONS</p><h1>Playlists.</h1><p>Organize without copying the audio.</p></div><button id="newPlaylist" class="addBtn" aria-label="New playlist">+</button></div><div id="playlistRoot"></div>
       </section>
 
       <section class="view" data-view="more">
         <div class="pageHead"><div><p class="eyebrow">ARISE</p><h1>More.</h1><p>Useful controls. No settings landfill.</p></div></div>
         <div class="featureGrid"><button id="favoritesBtn" class="feature"><span>♡</span><div><b>Favorites</b><small id="favoritesCount">0 tracks</small></div></button><button id="sleepBtn" class="feature"><span>◷</span><div><b>Sleep timer</b><small id="sleepStatus">Off</small></div></button><button id="clearHistory" class="feature"><span>↺</span><div><b>Clear history</b><small>Keep the songs</small></div></button><button id="storageBtn" class="feature"><span>▣</span><div><b>Storage</b><small id="storageText">Calculating…</small></div></button></div>
-        <div class="buildCard"><span>ARISE PLAYER</span><b>Build AP-810</b><small id="buildState">GitHub Pages edition • playback + metadata fix</small></div>
+        <div class="buildCard"><span>ARISE PLAYER</span><b>Build AP-811</b><small id="buildState">GitHub Pages edition • heavy-QA build</small></div>
       </section>
     </main>
 
-    <button id="mini" class="mini" hidden><div id="miniArt" class="art"></div><div class="miniCopy"><b id="miniTitle">—</b><small id="miniArtist">—</small><i id="miniProgress"></i></div><span id="miniPlay" class="miniPlay"></span></button>
+    <button id="mini" class="mini" hidden aria-label="Open Now Playing"><div id="miniArt" class="art"></div><div class="miniCopy"><b id="miniTitle">—</b><small id="miniArtist">—</small><i id="miniProgress"></i></div><span id="miniPlay" class="miniPlay"></span></button>
 
     <nav class="tabs"><button class="tab active" data-tab="home"><span>⌂</span><small>Home</small></button><button class="tab" data-tab="library"><span>▤</span><small>Library</small></button><button class="tab" data-tab="playlists"><span>≡</span><small>Playlists</small></button><button class="tab" data-tab="more"><span>•••</span><small>More</small></button></nav>
   </div>
 
   <section id="now" class="now" hidden>
-    <div id="backdrop" class="backdrop"></div><div class="nowShell"><div class="nowTop"><button id="closeNow" class="round">⌄</button><b>NOW PLAYING</b><button id="trackMenu" class="round">•••</button></div><div id="nowArt" class="nowArt art"></div><div class="nowMeta"><div><h1 id="nowTitle">—</h1><p id="nowArtist">—</p></div><button id="heart" class="heart">♡</button></div><div class="badges"><span id="quality">LOCAL</span><span id="queuePos">1 of 1</span></div><div class="scrub"><input id="seek" type="range" min="0" max="1000" value="0"><div><span id="elapsed">0:00</span><span id="remaining">−0:00</span></div></div><div class="transport"><button id="shuffle" class="smallCtl">⤨</button><button id="prev" class="ctl">◀◀</button><button id="play" class="playBtn"></button><button id="next" class="ctl">▶▶</button><button id="repeat" class="smallCtl">↻</button></div><div id="upNext" class="upNext" hidden><small>UP NEXT</small><b id="upTitle">—</b><span id="upArtist">—</span></div></div>
+    <div id="backdrop" class="backdrop"></div><div class="nowShell"><div class="nowTop"><button id="closeNow" class="round" aria-label="Close Now Playing">⌄</button><b>NOW PLAYING</b><button id="trackMenu" class="round" aria-label="Track options">•••</button></div><div id="nowArt" class="nowArt art"></div><div class="nowMeta"><div><h1 id="nowTitle">—</h1><p id="nowArtist">—</p></div><button id="heart" class="heart" aria-label="Favorite">♡</button></div><div class="badges"><span id="quality">LOCAL</span><span id="queuePos">1 of 1</span></div><div class="scrub"><input id="seek" type="range" min="0" max="1000" value="0" aria-label="Playback position"><div><span id="elapsed">0:00</span><span id="remaining">−0:00</span></div></div><div class="transport"><button id="shuffle" class="smallCtl" aria-label="Shuffle">⤨</button><button id="prev" class="ctl" aria-label="Previous track">◀◀</button><button id="play" class="playBtn" aria-label="Play or pause"></button><button id="next" class="ctl" aria-label="Next track">▶▶</button><button id="repeat" class="smallCtl" aria-label="Repeat">↻</button></div><div id="upNext" class="upNext" hidden><small>UP NEXT</small><b id="upTitle">—</b><span id="upArtist">—</span></div></div>
   </section>
 
   <dialog id="sheet"><div id="sheetBody"></div></dialog>
   <dialog id="formDialog"><form id="formBody" method="dialog"></form></dialog>
   <div id="toast" class="toast"></div>
   <audio id="audio" preload="metadata" playsinline></audio>
-  <script src="./app.js?v=800" defer></script>
-  <script src="./hotfix.js?v=810" defer></script>
+  <script src="./pre811.js?v=811"></script>
+  <script src="./app.js?v=811" defer></script>
+  <script src="./hotfix.js?v=811" defer></script>
+  <script src="./ap811.js?v=811" defer></script>
 </body>
 </html>
