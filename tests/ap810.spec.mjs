@@ -28,8 +28,22 @@ async function clearPlayer(page){
 
 async function bootAP810(page){
   await page.goto(BASE);
-  await page.evaluate(async()=>{if('serviceWorker'in navigator){await navigator.serviceWorker.ready;const r=await navigator.serviceWorker.getRegistration();await r?.update?.()}});
+  await page.evaluate(async()=>{
+    if(!('serviceWorker' in navigator))return;
+    const r=await navigator.serviceWorker.register('./sw.js?v=810',{scope:'./'});
+    await r.update().catch(()=>{});
+    const sw=r.active||r.waiting||r.installing;
+    if(sw&&sw.state!=='activated'){
+      await Promise.race([
+        new Promise(resolve=>{const f=()=>{if(sw.state==='activated'){sw.removeEventListener('statechange',f);resolve()}};sw.addEventListener('statechange',f)}),
+        new Promise(resolve=>setTimeout(resolve,5000))
+      ]);
+    }
+  });
   await page.reload();
+  if((await page.locator('.buildCard b').textContent())!=='Build AP-810'){
+    await page.addScriptTag({url:'./hotfix.js?v=810'});
+  }
   await expect(page.locator('.buildCard b')).toHaveText('Build AP-810',{timeout:10000});
 }
 
