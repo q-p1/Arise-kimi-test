@@ -26,13 +26,6 @@ async function clearPlayer(page){
   });
 }
 
-async function bootAP810(page){
-  await page.goto(BASE);
-  await page.evaluate(async()=>{if('serviceWorker'in navigator){await navigator.serviceWorker.ready;const r=await navigator.serviceWorker.getRegistration();await r?.update?.()}});
-  await page.reload();
-  await expect(page.locator('.buildCard b')).toHaveText('Build AP-810',{timeout:10000});
-}
-
 async function importVia(page,files){
   await page.locator('[data-tab="library"]').click();
   const chooserPromise=page.waitForEvent('filechooser');
@@ -44,18 +37,19 @@ async function importVia(page,files){
 test.beforeEach(async({page})=>{
   await page.goto(BASE);
   await clearPlayer(page);
-  await bootAP810(page);
+  await page.reload();
+  await expect(page.locator('.buildCard b')).toHaveText('Build AP-810',{timeout:10000});
 });
 
 test('AP-810 auto advances from the first local track to the second',async({page})=>{
   await importVia(page,[
-    {name:'First Artist - First.wav',mimeType:'audio/wav',buffer:wavBuffer({frequency:330})},
-    {name:'Second Artist - Second.wav',mimeType:'audio/wav',buffer:wavBuffer({frequency:550})},
+    {name:'Second Artist - Second.wav',mimeType:'audio/wav',buffer:wavBuffer({seconds:2,frequency:550})},
+    {name:'First Artist - First.wav',mimeType:'audio/wav',buffer:wavBuffer({seconds:.32,frequency:330})},
   ]);
   await expect(page.locator('#libraryCount')).toContainText('2 tracks');
   await page.locator('#libraryList .track').first().click();
-  const first=await page.locator('#miniTitle').textContent();
-  await expect.poll(async()=>page.locator('#miniTitle').textContent(),{timeout:8000}).not.toBe(first);
+  await expect(page.locator('#miniTitle')).toHaveText('First');
+  await expect.poll(async()=>page.locator('#miniTitle').textContent(),{timeout:8000}).toBe('Second');
   await expect(page.locator('#audio')).toHaveJSProperty('paused',false);
 });
 
