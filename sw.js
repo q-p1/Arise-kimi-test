@@ -1,7 +1,8 @@
-const CACHE='arise-player-ap812-20260821-1';
+const CACHE='arise-player-ap812-20260821-2';
 const SHELL=[
   './','./index.html','./app.css?v=812','./pre811.js?v=812','./app.js?v=812',
-  './hotfix.js?v=812','./ap811.js?v=812','./ap812.js?v=812','./manifest.webmanifest?v=812','./brand-mark.svg'
+  './hotfix.js?v=812','./ap811.js?v=812','./ap812.js?v=812','./catalog812.js?v=812',
+  './manifest.webmanifest?v=812','./brand-mark.svg'
 ];
 
 self.addEventListener('install',event=>{
