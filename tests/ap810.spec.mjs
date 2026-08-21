@@ -38,10 +38,10 @@ test.beforeEach(async({page})=>{
   await page.goto(BASE);
   await clearPlayer(page);
   await page.reload();
-  await expect(page.locator('.buildCard b')).toHaveText('Build AP-812',{timeout:10000});
+  await expect(page.locator('.buildCard b')).toHaveText('Build AP-813',{timeout:10000});
 });
 
-test('AP-812 auto advances from the first local track to the second',async({page})=>{
+test('AP-813 auto advances from the first local track to the second',async({page})=>{
   await importVia(page,[
     {name:'Second Artist - Second.wav',mimeType:'audio/wav',buffer:wavBuffer({seconds:2,frequency:550})},
     {name:'First Artist - First.wav',mimeType:'audio/wav',buffer:wavBuffer({seconds:.32,frequency:330})},
@@ -53,7 +53,7 @@ test('AP-812 auto advances from the first local track to the second',async({page
   await expect(page.locator('#audio')).toHaveJSProperty('paused',false);
 });
 
-test('AP-812 reads embedded artist and song cover from ID3',async({page})=>{
+test('AP-813 reads embedded artist and song cover from ID3',async({page})=>{
   await importVia(page,[{name:'mystery.mp3',mimeType:'audio/mpeg',buffer:taggedMp3()}]);
   await expect(page.locator('#libraryCount')).toContainText('1 track',{timeout:10000});
   await expect(page.locator('#libraryList .trackCopy b')).toHaveText('Embedded Title');
