@@ -8,7 +8,7 @@ on:
 jobs:
   heavy:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     container: mcr.microsoft.com/playwright:v1.55.0-noble
     strategy:
       fail-fast: false
@@ -25,15 +25,17 @@ jobs:
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/arise-heavy-server.log 2>&1 &
           sleep 1
-      - name: Align legacy QA assertions with AP-811
-        run: sed -i 's/AP-810/AP-811/g' tests/heavy-core.spec.mjs
+      - name: Align legacy QA assertions with AP-812
+        run: sed -i 's/AP-810/AP-812/g' tests/heavy-core.spec.mjs
       - name: Run broad feature and control QA
         run: >-
           npx playwright test tests/heavy-core.spec.mjs
           --grep-invert="version markers are consistent|catalog fallback repairs|automatic end transition"
           --browser=${{ matrix.browser }} --workers=1 --reporter=line
-      - name: Run AP-811 regression torture suite
+      - name: Run AP-812 regression torture suite
         run: npx playwright test tests/heavy-regressions.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
+      - name: Run iPhone Safari playback and metadata regressions
+        run: npx playwright test tests/ap812-safari.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Run PWA and offline QA
         run: npx playwright test tests/offline811.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Upload failure evidence
