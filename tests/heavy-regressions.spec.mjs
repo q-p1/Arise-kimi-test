@@ -10,21 +10,22 @@ function wavBuffer({seconds=3,sampleRate=8000,frequency=440}={}){const samples=M
 const wav=(name,o={})=>({name,mimeType:'audio/wav',buffer:wavBuffer(o)});
 
 async function boot(page,{catalog=false}={}){
-  await page.route(`${META}**`,r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(catalog?{matched:true,title:'Catalog Song',artist:'Catalog Artist',album:'Catalog Album',artworkData:`data:image/png;base64,${PNG}`}:{matched:false})}));
+  await page.route(`${META}**`,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify(catalog?{matched:true,title:'Catalog Song',artist:'Catalog Artist',album:'Catalog Album',artworkData:`data:image/png;base64,${PNG}`}:{matched:false})}));
+  await page.route('https://itunes.apple.com/search**',r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"resultCount":0,"results":[]}'}));
   await page.goto(BASE,{waitUntil:'domcontentloaded'});
-  await expect(page.locator('.buildCard b')).toHaveText('Build AP-811',{timeout:10000});
-  await expect(page.locator('#heroStats')).toContainText('AP-811',{timeout:10000});
+  await expect(page.locator('.buildCard b')).toHaveText('Build AP-812',{timeout:10000});
+  await expect(page.locator('#heroStats')).toContainText('AP-812',{timeout:10000});
 }
 async function importFiles(page,files){await page.locator('[data-tab="library"]').click();await page.locator('#importTop').setInputFiles(files);await expect(page.locator('#libraryList .track')).toHaveCount(files.length,{timeout:15000})}
 async function titleSort(page){const b=page.locator('#sortBtn');while((await b.textContent())!=='Title')await b.click()}
 
 
-test('AP-811 raw shell, manifest, cache version and script graph are internally consistent',async({page})=>{
+test('AP-812 raw shell, manifest, cache version and script graph are internally consistent',async({page})=>{
   await boot(page);
-  const x=await page.evaluate(async()=>{const [html,m,sw]=await Promise.all([fetch('./index.html',{cache:'no-store'}).then(r=>r.text()),fetch('./manifest.webmanifest?v=811',{cache:'no-store'}).then(r=>r.json()),fetch('./sw.js?v=811',{cache:'no-store'}).then(r=>r.text())]);return{html,start:m.start_url,sw}});
-  expect(x.start).toBe('./?build=811');
-  for(const asset of ['pre811.js?v=811','app.js?v=811','hotfix.js?v=811','ap811.js?v=811'])expect(x.html).toContain(asset);
-  expect(x.html).toContain('Build AP-811');expect(x.sw).toContain('arise-player-ap811-');expect(x.sw).toContain("'./ap811.js?v=811'");
+  const x=await page.evaluate(async()=>{const [html,m,sw]=await Promise.all([fetch('./index.html',{cache:'no-store'}).then(r=>r.text()),fetch('./manifest.webmanifest?v=812',{cache:'no-store'}).then(r=>r.json()),fetch('./sw.js?v=812',{cache:'no-store'}).then(r=>r.text())]);return{html,start:m.start_url,sw}});
+  expect(x.start).toBe('./?build=812');
+  for(const asset of ['pre811.js?v=812','app.js?v=812','hotfix.js?v=812','ap811.js?v=812','ap812.js?v=812'])expect(x.html).toContain(asset);
+  expect(x.html).toContain('Build AP-812');expect(x.sw).toContain('arise-player-ap812-');expect(x.sw).toContain("'./ap812.js?v=812'");
 });
 
 test('catalog repair supplies title, artist, album and a renderable real cover',async({page})=>{
@@ -68,7 +69,7 @@ test('legacy filename guesses are replaced by authoritative embedded metadata',a
 });
 
 test('version-2 IndexedDB does not brick startup',async({page})=>{
-  await page.route('**/app.js*',r=>r.fulfill({status:200,contentType:'application/javascript',body:''}));await page.route('**/hotfix.js*',r=>r.fulfill({status:200,contentType:'application/javascript',body:''}));await page.route('**/ap811.js*',r=>r.fulfill({status:200,contentType:'application/javascript',body:''}));await page.goto(BASE);
+  await page.route('**/app.js*',r=>r.fulfill({status:200,contentType:'application/javascript',body:''}));await page.route('**/hotfix.js*',r=>r.fulfill({status:200,contentType:'application/javascript',body:''}));await page.route('**/ap811.js*',r=>r.fulfill({status:200,contentType:'application/javascript',body:''}));await page.route('**/ap812.js*',r=>r.fulfill({status:200,contentType:'application/javascript',body:''}));await page.goto(BASE);
   await page.evaluate(()=>new Promise((res,rej)=>{const r=indexedDB.open('arise-player-v3',2);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('tracks'))r.result.createObjectStore('tracks',{keyPath:'id'})};r.onsuccess=()=>{r.result.close();res()};r.onerror=()=>rej(r.error)}));
-  await page.unroute('**/app.js*');await page.unroute('**/hotfix.js*');await page.unroute('**/ap811.js*');await page.route(`${META}**`,r=>r.fulfill({status:200,contentType:'application/json',body:'{"matched":false}'}));await page.reload();await expect(page.locator('.buildCard b')).toHaveText('Build AP-811',{timeout:10000});await expect(page.locator('body')).not.toContainText('could not start');
+  await page.unroute('**/app.js*');await page.unroute('**/hotfix.js*');await page.unroute('**/ap811.js*');await page.unroute('**/ap812.js*');await page.route(`${META}**`,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"matched":false}'}));await page.route('https://itunes.apple.com/search**',r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"resultCount":0,"results":[]}'}));await page.reload();await expect(page.locator('.buildCard b')).toHaveText('Build AP-812',{timeout:10000});await expect(page.locator('body')).not.toContainText('could not start');
 });
