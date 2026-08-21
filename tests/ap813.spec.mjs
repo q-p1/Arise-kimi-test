@@ -29,6 +29,8 @@ async function clearLibrary(page){
     if(db.objectStoreNames.contains('tracks'))await new Promise((res,rej)=>{const tx=db.transaction('tracks','readwrite');tx.objectStore('tracks').clear();tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});
   });
   await page.reload({waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>!!navigator.serviceWorker.controller,{timeout:15000});
+  await expect.poll(()=>page.evaluate(()=>ap813CanVirtual())).toBe(true);
 }
 async function importFiles(page,files){
   await page.locator('[data-tab="library"]').click();await page.locator('#importTop').setInputFiles(files);await expect(page.locator('#libraryList .track')).toHaveCount(files.length,{timeout:15000});
