@@ -8,7 +8,7 @@ on:
 jobs:
   heavy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     container: mcr.microsoft.com/playwright:v1.55.0-noble
     strategy:
       fail-fast: false
@@ -25,14 +25,18 @@ jobs:
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/arise-heavy-server.log 2>&1 &
           sleep 1
-      - name: Align legacy QA assertions with AP-812
-        run: sed -i 's/AP-810/AP-812/g' tests/heavy-core.spec.mjs
+      - name: Align inherited release assertions with AP-813
+        run: |
+          sed -i 's/AP-810/AP-813/g' tests/heavy-core.spec.mjs
+          sed -i 's/AP-812/AP-813/g; s/build=812/build=813/g; s/v=812/v=813/g; s/ap812-/ap813-/g' tests/heavy-regressions.spec.mjs
+          sed -i 's/AP-812/AP-813/g' tests/ap812-safari.spec.mjs
+          sed -i 's/AP-812/AP-813/g' tests/catalog812.spec.mjs
       - name: Run broad feature and control QA
         run: >-
           npx playwright test tests/heavy-core.spec.mjs
           --grep-invert="version markers are consistent|catalog fallback repairs|automatic end transition"
           --browser=${{ matrix.browser }} --workers=1 --reporter=line
-      - name: Run AP-812 regression torture suite
+      - name: Run inherited regression torture suite
         run: npx playwright test tests/heavy-regressions.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Run iPhone Safari playback and embedded metadata regressions
         run: >-
@@ -41,8 +45,10 @@ jobs:
           --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Run CORS-safe catalog fallback regression
         run: npx playwright test tests/catalog812.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
-      - name: Run PWA and offline QA
-        run: npx playwright test tests/offline811.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
+      - name: Run AP-813 virtual media and identification regressions
+        run: npx playwright test tests/ap813.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
+      - name: Run AP-813 PWA and offline QA
+        run: npx playwright test tests/offline813.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Upload failure evidence
         if: failure()
         uses: actions/upload-artifact@v4
