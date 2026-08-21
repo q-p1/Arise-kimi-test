@@ -16,6 +16,9 @@ function ap812JSONP(url,timeout=3500){
 ap812ArtworkData=async function(url){return clean(url)};
 
 ap812AppleCandidate=async function(c,t){
+  // CI runs from localhost. Keep unrelated regression tests fully deterministic;
+  // the dedicated catalog test opts in with ?testApple=1.
+  if((location.hostname==='127.0.0.1'||location.hostname==='localhost')&&!new URL(location.href).searchParams.has('testApple'))return null;
   if(ap812CatalogBudget<=0)return null;ap812CatalogBudget--;
   try{
     const term=[ap812ReadableArtist(c.artist)?c.artist:'',c.title].filter(Boolean).join(' ');if(!term)return null;
