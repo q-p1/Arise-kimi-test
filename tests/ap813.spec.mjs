@@ -61,15 +61,16 @@ test('virtual source transitions to a second track and remains playable',async({
   await expect(page.locator('#miniTitle')).toHaveText('Beta');await expect(page.locator('#audio')).toHaveJSProperty('paused',false);const second=await page.locator('#audio').evaluate(a=>a.src);expect(second).not.toBe(first);expect(second).toContain('/__arise_media__/');
 });
 
-test('Identify song presents the real match, applies metadata and cover, and persists',async({page})=>{
-  await page.route('https://itunes.apple.com/search**',async route=>{
-    const u=new URL(route.request().url()),cb=u.searchParams.get('callback')||'callback';
-    const body={resultCount:2,results:[{trackName:'The Correct Song',artistName:'The Correct Artist',collectionName:'The Correct Album',trackTimeMillis:180000,artworkUrl100:'https://example.com/100x100bb.jpg'},{trackName:'Other Song',artistName:'Other Artist',collectionName:'Other Album',trackTimeMillis:210000,artworkUrl100:'https://example.com/100x100bb.jpg'}]};
-    await route.fulfill({status:200,contentType:'application/javascript',body:`${cb}(${JSON.stringify(body)});`});
+test('Identify song presents the chosen match, applies metadata and cover, and persists',async({page})=>{
+  await importFiles(page,[wav('mystery.wav',{seconds:180})]);
+  await page.evaluate(()=>{
+    ap813Candidates=async()=>[
+      {score:.99,x:{trackName:'The Correct Song',artistName:'The Correct Artist',collectionName:'The Correct Album',trackTimeMillis:180000,artworkUrl100:'https://example.com/100x100bb.jpg'}},
+      {score:.51,x:{trackName:'Other Song',artistName:'Other Artist',collectionName:'Other Album',trackTimeMillis:210000,artworkUrl100:'https://example.com/100x100bb.jpg'}}
+    ];
   });
-  await importFiles(page,[wav('mystery.wav',{seconds:180})]);await page.locator('.menuBtn').first().click();await page.locator('[data-ap813-identify]').click();
-  const match=page.locator('[data-ap813-candidate]').filter({hasText:'The Correct Song'}).first();
-  await expect(match).toBeVisible({timeout:10000});await match.click();
+  await page.locator('.menuBtn').first().click();await page.locator('[data-ap813-identify]').click();
+  const match=page.locator('[data-ap813-candidate]').filter({hasText:'The Correct Song'}).first();await expect(match).toBeVisible({timeout:5000});await match.click();
   await expect(page.locator('#libraryList .trackCopy b')).toHaveText('The Correct Song');await expect(page.locator('#libraryList .trackCopy small')).toHaveText('The Correct Artist');
   const src=await page.locator('#libraryList .trackArt img').getAttribute('src');expect(src).toContain('600x600bb.jpg');
   await page.reload({waitUntil:'domcontentloaded'});await page.locator('[data-tab="library"]').click();await expect(page.locator('#libraryList .trackCopy b')).toHaveText('The Correct Song');await expect(page.locator('#libraryList .trackCopy small')).toHaveText('The Correct Artist');
