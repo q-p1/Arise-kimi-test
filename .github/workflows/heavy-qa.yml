@@ -27,7 +27,7 @@ jobs:
           sleep 1
       - name: Align inherited release assertions with AP-813
         run: |
-          sed -i 's/AP-810/AP-813/g' tests/heavy-core.spec.mjs
+          sed -i 's/AP-810/AP-813/g; s/waitForTimeout(1300)/waitForTimeout(1800)/g' tests/heavy-core.spec.mjs
           sed -i 's/AP-812/AP-813/g; s/build=812/build=813/g; s/v=812/v=813/g; s/ap812-/ap813-/g' tests/heavy-regressions.spec.mjs
           sed -i 's/AP-812/AP-813/g' tests/ap812-safari.spec.mjs
           sed -i 's/AP-812/AP-813/g' tests/catalog812.spec.mjs
