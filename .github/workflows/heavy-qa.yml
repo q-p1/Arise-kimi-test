@@ -34,8 +34,13 @@ jobs:
           --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Run AP-812 regression torture suite
         run: npx playwright test tests/heavy-regressions.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
-      - name: Run iPhone Safari playback and metadata regressions
-        run: npx playwright test tests/ap812-safari.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
+      - name: Run iPhone Safari playback and embedded metadata regressions
+        run: >-
+          npx playwright test tests/ap812-safari.spec.mjs
+          --grep-invert="Apple catalog fallback"
+          --browser=${{ matrix.browser }} --workers=1 --reporter=line
+      - name: Run CORS-safe catalog fallback regression
+        run: npx playwright test tests/catalog812.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Run PWA and offline QA
         run: npx playwright test tests/offline811.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Upload failure evidence
