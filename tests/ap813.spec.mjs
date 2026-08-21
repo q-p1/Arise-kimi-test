@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
 
 const BASE='http://127.0.0.1:4173/';
+const ART='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2nK8AAAAASUVORK5CYII=';
 test.use({viewport:{width:390,height:844},serviceWorkers:'allow'});
 test.setTimeout(60000);
 
@@ -63,17 +64,18 @@ test('virtual source transitions to a second track and remains playable',async({
 
 test('Identify song presents the chosen match, applies metadata and cover, and persists',async({page})=>{
   await importFiles(page,[wav('mystery.wav',{seconds:180})]);
-  await page.evaluate(()=>{
+  await page.evaluate(art=>{
     ap813Candidates=async()=>[
-      {score:.99,x:{trackName:'The Correct Song',artistName:'The Correct Artist',collectionName:'The Correct Album',trackTimeMillis:180000,artworkUrl100:'https://example.com/100x100bb.jpg'}},
-      {score:.51,x:{trackName:'Other Song',artistName:'Other Artist',collectionName:'Other Album',trackTimeMillis:210000,artworkUrl100:'https://example.com/100x100bb.jpg'}}
+      {score:.99,x:{trackName:'The Correct Song',artistName:'The Correct Artist',collectionName:'The Correct Album',trackTimeMillis:180000,artworkUrl100:art}},
+      {score:.51,x:{trackName:'Other Song',artistName:'Other Artist',collectionName:'Other Album',trackTimeMillis:210000,artworkUrl100:art}}
     ];
-  });
+  },ART);
   await page.locator('.menuBtn').first().click();await page.locator('[data-ap813-identify]').click();
   const match=page.locator('[data-ap813-candidate]').filter({hasText:'The Correct Song'}).first();await expect(match).toBeVisible({timeout:5000});await match.click();
   await expect(page.locator('#libraryList .trackCopy b')).toHaveText('The Correct Song');await expect(page.locator('#libraryList .trackCopy small')).toHaveText('The Correct Artist');
-  const src=await page.locator('#libraryList .trackArt img').getAttribute('src');expect(src).toContain('600x600bb.jpg');
+  const src=await page.locator('#libraryList .trackArt img').getAttribute('src');expect(src).toBe(ART);
   await page.reload({waitUntil:'domcontentloaded'});await page.locator('[data-tab="library"]').click();await expect(page.locator('#libraryList .trackCopy b')).toHaveText('The Correct Song');await expect(page.locator('#libraryList .trackCopy small')).toHaveText('The Correct Artist');
+  expect(await page.locator('#libraryList .trackArt img').getAttribute('src')).toBe(ART);
 });
 
 test('manual metadata editing is available when recognition is wrong',async({page})=>{
