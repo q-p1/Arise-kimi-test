@@ -26,5 +26,7 @@ jobs:
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/arise-server.log 2>&1 &
           sleep 1
-      - name: Test playback transition and metadata
+      - name: Test basic playback transition and embedded metadata
         run: npx playwright test tests/ap810.spec.mjs --browser=${{ matrix.browser }} --reporter=line
+      - name: Test virtual media bridge, resume, and identification
+        run: npx playwright test tests/ap813.spec.mjs --browser=${{ matrix.browser }} --reporter=line
