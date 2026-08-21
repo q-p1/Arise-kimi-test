@@ -18,7 +18,15 @@ test('AP-813 service worker precaches the complete shell including virtual-media
 });
 
 test('Chromium can boot AP-813 while actually offline',async({page,context,browserName})=>{
-  test.skip(browserName!=='chromium','Playwright WebKit offline navigation is unreliable; cache integrity is tested separately.');await activate(page);await context.setOffline(true);try{await page.goto(`${BASE}?offline=813`,{waitUntil:'domcontentloaded',timeout:15000});await expect(page.locator('.buildCard b')).toHaveText('Build AP-813',{timeout:10000})}finally{await context.setOffline(false)}
+  test.skip(browserName!=='chromium','Playwright WebKit offline navigation is unreliable; cache integrity is tested separately.');
+  await activate(page);
+  await page.goto(`${BASE}?claim=813`,{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>!!navigator.serviceWorker.controller,{timeout:12000});
+  await context.setOffline(true);
+  try{
+    await page.goto(`${BASE}?offline=813`,{waitUntil:'domcontentloaded',timeout:15000});
+    await expect(page.locator('.buildCard b')).toHaveText('Build AP-813',{timeout:10000});
+  }finally{await context.setOffline(false)}
 });
 
 test('WebKit sees AP-813 cached HTML and media bridge without toggling offline mode',async({page,browserName})=>{
