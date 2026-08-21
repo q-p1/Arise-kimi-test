@@ -47,6 +47,8 @@ jobs:
         run: npx playwright test tests/catalog812.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Run AP-813 virtual media and identification regressions
         run: npx playwright test tests/ap813.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
+      - name: Run installed iPhone hidden-page pre-end regression
+        run: npx playwright test tests/ap813-ios.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Run AP-813 PWA and offline QA
         run: npx playwright test tests/offline813.spec.mjs --browser=${{ matrix.browser }} --workers=1 --reporter=line
       - name: Upload failure evidence
