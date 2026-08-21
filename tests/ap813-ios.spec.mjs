@@ -21,11 +21,12 @@ async function controlled(page){
 test('installed iPhone hidden-page path hands off before the dead ended state',async({page})=>{
   await controlled(page);await page.locator('[data-tab="library"]').click();await page.locator('#importTop').setInputFiles([wav('A - Alpha.wav',{seconds:5,frequency:330}),wav('B - Beta.wav',{seconds:8,frequency:550})]);await expect(page.locator('#libraryList .track')).toHaveCount(2);
   const sort=page.locator('#sortBtn');while((await sort.textContent())!=='Title')await sort.click();await page.locator('#libraryList .track').filter({hasText:'Alpha'}).click();await expect(page.locator('#miniTitle')).toHaveText('Alpha');
+  await page.waitForFunction(()=>Number.isFinite(audio.duration)&&audio.duration>1&&audio.readyState>=1,{timeout:10000});
   const r=await page.evaluate(()=>{
     Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});
-    const before={title:state.current?.title,index:state.index,src:audio.src};
-    audio.currentTime=Math.max(0,Number(audio.duration)-.2);audio.dispatchEvent(new Event('timeupdate'));
+    const before={title:state.current?.title,index:state.index,src:audio.src,duration:audio.duration};
+    audio.currentTime=Math.max(0,audio.duration-.2);audio.dispatchEvent(new Event('timeupdate'));
     return{before,hidden:document.hidden};
-  });expect(r.hidden).toBe(true);
+  });expect(r.hidden).toBe(true);expect(r.before.duration).toBeGreaterThan(1);
   await expect(page.locator('#miniTitle')).toHaveText('Beta',{timeout:5000});await expect(page.locator('#audio')).toHaveJSProperty('paused',false);const src=await page.locator('#audio').evaluate(a=>a.src);expect(src).toContain('/__arise_media__/');expect(src).not.toBe(r.before.src);
 });
